@@ -23,6 +23,8 @@ class HotfrogdetailsPipeline(object):
         website_link text,
         phone text,
         business_info text,
+        business_description text,
+        direction text,
         find text,
         near text,
         email text,
@@ -35,11 +37,13 @@ class HotfrogdetailsPipeline(object):
         return item
 
     def store_db(self,item):
-        self.curr.execute("""insert into detail values (?,?,?,?,?,?,?,?)""",(
+        self.curr.execute("""insert into detail values (?,?,?,?,?,?,?,?,?,?)""",(
             item['website_name'],
             item['website_link'],
             item['phone'],
             item['business_info'],
+            item['business_description'],
+            item['direction'],
             item['find'],
             item['near'],
             item['email'],

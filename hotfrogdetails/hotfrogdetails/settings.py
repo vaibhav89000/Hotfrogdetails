@@ -20,7 +20,7 @@ NEWSPIDER_MODULE = 'hotfrogdetails.spiders'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
-# PROXY_POOL_ENABLED = True
+PROXY_POOL_ENABLED = True
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
@@ -54,8 +54,8 @@ ROBOTSTXT_OBEY = False
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     'scrapy_selenium.SeleniumMiddleware': 800,
-    # 'scrapy_proxy_pool.middlewares.ProxyPoolMiddleware': 610,
-    # 'scrapy_proxy_pool.middlewares.BanDetectionMiddleware': 620,
+    'scrapy_proxy_pool.middlewares.ProxyPoolMiddleware': 610,
+    'scrapy_proxy_pool.middlewares.BanDetectionMiddleware': 620,
 }
 
 # Enable or disable extensions

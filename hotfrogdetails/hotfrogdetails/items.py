@@ -15,6 +15,8 @@ class HotfrogdetailsItem(scrapy.Item):
     website_link = scrapy.Field()
     phone = scrapy.Field()
     business_info = scrapy.Field()
+    business_description = scrapy.Field()
+    direction = scrapy.Field()
     find = scrapy.Field()
     near = scrapy.Field()
     email = scrapy.Field()

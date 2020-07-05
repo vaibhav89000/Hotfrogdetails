@@ -76,18 +76,21 @@ class HotfrogSpider(scrapy.Spider):
                 web_link = []
                 web_phone = []
                 web_business = []
+                web_description = []
+                web_directon = []
                 i=1
                 main_url = driver.current_url
 
                 index += 1
+
+                duplicate_list=[]
 
                 yield SeleniumRequest(
                     url=driver.current_url,
                     wait_time=3,
                     screenshot=True,
                     callback=self.parse_page,
-                    meta={'index': index,'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                              'web_business': web_business,'i':i,'main_url':main_url,'numpages':numpages[0]},
+                    meta={'index': index,'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,'web_business': web_business,'i':i,'main_url':main_url,'numpages':int(numpages[0]),'duplicate_list':duplicate_list,'web_description':web_description,'web_directon':web_directon},
                     dont_filter=True
                 )
 
@@ -103,36 +106,72 @@ class HotfrogSpider(scrapy.Spider):
         numpages = response.meta['numpages']
         i = response.meta['i']
         main_url = response.meta['main_url']
+        duplicate_list = response.meta['duplicate_list']
+        web_description = response.meta['web_description']
+        web_directon = response.meta['web_directon']
+        print()
+        print('number of pages',numpages)
+        print('i', i)
+        print(driver.current_url)
+        print()
+        print()
+
         # if(response.url!='https://www.google.com/'):
         #     print()
         #     print(driver.current_url)
         #     print()
         #     print()
+        # try:
+        # if(driver.find_element_by_id('master-1')):
         try:
-            if(driver.find_element_by_id('master-1')):
-                driver.switch_to.frame(driver.find_element_by_id('master-1'))
+            html = driver.page_source
+            response_obj = Selector(text=html)
+            next_page = response_obj.xpath('//div[1]/div[2]/div[58]/nav/ul/li/a[contains(text(),"Next")]/@href').get()
 
-                html = driver.page_source
-                response_obj = Selector(text=html)
-                print()
-                print()
-                print(response.url)
-                print()
-                print()
-                details = response_obj.xpath("//div[@class='gc_ si101 c_']")
-                print()
-                print(len(details))
-                print('hello')
-                print()
-                # web_name = []
-                # web_link = []
-                # web_phone = []
-                # web_business = []
-                for detail in details:
-                    website_name = detail.xpath('.//div/div/a[2]/text()').get()
-                    website_link = detail.xpath('.//div/div/a[1]/@href').get()
-                    phone = detail.xpath('.//div[1]/span[@class="mc_ si20 "]/text()').get()
-                    business_info = detail.xpath('.//div[2]/a/text()').get()
+            driver.switch_to.frame(driver.find_element_by_id('master-1'))
+
+            html = driver.page_source
+            response_obj = Selector(text=html)
+            print()
+            print()
+            print('inside',response.url)
+            print()
+            print()
+            details = response_obj.xpath("//div[@class='gc_ si101 c_']")
+            print()
+            print(len(details))
+            print('hello')
+            print()
+            # web_name = []
+            # web_link = []
+            # web_phone = []
+            # web_business = []
+            for detail in details:
+                website_name = detail.xpath('.//div/div/a[2]/text()').get()
+                website_link = detail.xpath('.//div/div/a[1]/@href').get()
+                phone = detail.xpath('.//div[1]/span[@class="mc_ si20 "]/text()').get()
+                business_info = detail.xpath('.//div[2]/a//text()').extract()
+                business_description = detail.xpath('.//div[2]/div/span//text()').extract()
+                direction = detail.xpath('.//div[2]/span//text()').extract()
+                if(website_name not in duplicate_list):
+                    duplicate_list.append(website_name)
+                    print()
+                    print()
+                    print(business_info)
+                    print(business_description)
+                    print(direction)
+
+                    final_business_info=''
+                    for data in business_info:
+                        final_business_info += data
+
+                    final_business_description = ''
+                    for data in business_description:
+                        final_business_description += data
+
+                    final_direction = ''
+                    for data in direction:
+                        final_direction += data
 
                     if (website_name != None):
                         web_name.append(website_name)
@@ -149,52 +188,80 @@ class HotfrogSpider(scrapy.Spider):
                     else:
                         web_phone.append("NA")
 
-                    if (business_info != None):
-                        web_business.append(business_info)
+                    if (final_business_info != ''):
+                        web_business.append(final_business_info)
                     else:
                         web_business.append("NA")
-                # if(i==1):
-                #     i = i + 1
-                #     main_url = response.url
-                #     next_page = main_url + f'/{i}'
-                #
-                # else:
-                i = i+1
-                next_page = main_url + f'/{i}'
-                # next_page=f"https://www.hotfrog.com{direction}"
-                if(i>=numpages):
-                    print()
-                    print()
-                    print('Page',i)
-                    print()
-                    print()
-                    yield SeleniumRequest(
-                        url=driver.current_url,
-                        wait_time=3,
-                        screenshot=True,
-                        callback=self.parse_email,
-                        meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                              'web_business': web_business, 'index': index},
-                        dont_filter=True
-                    )
-                else:
-                    yield SeleniumRequest(
-                        url=next_page,
-                        wait_time=3,
-                        screenshot=True,
-                        callback=self.parse_page,
-                        meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                              'web_business': web_business,'i':i,'main_url':main_url,'index': index,'numpages':numpages},
-                        dont_filter=True
-                    )
+
+                    if (final_business_description != ''):
+                        web_description.append(final_business_description)
+                    else:
+                        web_description.append("NA")
+
+                    if (final_direction != ''):
+                        web_directon.append(final_direction)
+                    else:
+                        web_directon.append("NA")
+
+                # i = i+1
+                # next_page = main_url + f'/{i}'
+                # next_page=response_obj.xpath('//div[1]/div[2]/div[58]/nav/ul/li/a[contains(text(),"Next")]/@href').get()
+            print()
+            print()
+            print(i,next_page)
+            print()
+            print()
+            # next_page=f"https://www.hotfrog.com{direction}"
+            print()
+            print(type(i))
+            print(type(numpages))
+            print()
+
+            if (next_page and i < numpages):
+                print()
+                print('next page')
+                next_page = f"https://www.hotfrog.com{next_page}"
+                print()
+                print()
+                i = i + 1
+                yield SeleniumRequest(
+                    url=next_page,
+                    wait_time=3,
+                    screenshot=True,
+                    callback=self.parse_page,
+                    meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
+                          'web_business': web_business,'i':i,'main_url':main_url,'index': index,'numpages':numpages,'duplicate_list':duplicate_list,'web_description':web_description,'web_directon':web_directon},
+                    dont_filter=True
+                )
+            else:
+                print()
+                print()
+                print('Ready for email',i)
+                print()
+                print()
+                yield SeleniumRequest(
+                    url=driver.current_url,
+                    wait_time=3,
+                    screenshot=True,
+                    callback=self.parse_email,
+                    meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
+                          'web_business': web_business, 'index': index,'web_description':web_description,'web_directon':web_directon},
+                    dont_filter=True
+                )
         except:
+            print()
+            print()
+            print('No more page')
+            print()
+            print()
+
             yield SeleniumRequest(
                 url=driver.current_url,
                 wait_time=3,
                 screenshot=True,
                 callback=self.parse_email,
                 meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                      'web_business': web_business,'index': index},
+                      'web_business': web_business,'index': index,'web_description':web_description,'web_directon':web_directon},
                 dont_filter=True
             )
 
@@ -223,6 +290,8 @@ class HotfrogSpider(scrapy.Spider):
         web_phone = response.meta['web_phone']
         web_business = response.meta['web_business']
         index = response.meta['index']
+        web_description = response.meta['web_description']
+        web_directon = response.meta['web_directon']
         # site_url = response.meta['site_url']
 
         if(response.url=='https://www.google.com/'):
@@ -232,6 +301,8 @@ class HotfrogSpider(scrapy.Spider):
             Hotfrogdetails_Item['website_link'] = site_url
             Hotfrogdetails_Item['phone'] = web_phone[0]
             Hotfrogdetails_Item['business_info'] = web_business[0]
+            Hotfrogdetails_Item['business_description'] = web_description[0]
+            Hotfrogdetails_Item['direction'] = web_directon[0]
             Hotfrogdetails_Item['find'] = self.find_search
             Hotfrogdetails_Item['near'] = self.near_search
             Hotfrogdetails_Item['email'] = "NA"
@@ -257,6 +328,8 @@ class HotfrogSpider(scrapy.Spider):
             web_name.pop(0)
             web_phone.pop(0)
             web_business.pop(0)
+            web_description.pop(0)
+            web_directon.pop(0)
             if (len(web_link) > 0):
                 if (web_link[0] != 'NA'):
                     site_url = web_link[0]
@@ -267,7 +340,7 @@ class HotfrogSpider(scrapy.Spider):
                         screenshot=True,
                         callback=self.emailtrack,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                              'web_business': web_business, 'site_url': site_url,'index': index},
+                              'web_business': web_business, 'site_url': site_url,'index': index,'web_description':web_description,'web_directon':web_directon},
                         dont_filter=True
                     )
                 else:
@@ -277,7 +350,7 @@ class HotfrogSpider(scrapy.Spider):
                         screenshot=True,
                         callback=self.parse_email,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                              'web_business': web_business, 'site_url': 'NA','index': index},
+                              'web_business': web_business, 'site_url': 'NA','index': index,'web_description':web_description,'web_directon':web_directon},
                         dont_filter=True
                     )
             else:
@@ -300,7 +373,7 @@ class HotfrogSpider(scrapy.Spider):
                         screenshot=True,
                         callback=self.emailtrack,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                              'web_business': web_business,'site_url':site_url,'index': index},
+                              'web_business': web_business,'site_url':site_url,'index': index,'web_description':web_description,'web_directon':web_directon},
                         dont_filter=True
                     )
                 else:
@@ -310,7 +383,7 @@ class HotfrogSpider(scrapy.Spider):
                         screenshot=True,
                         callback=self.parse_email,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                              'web_business': web_business,'site_url':'NA','index': index},
+                              'web_business': web_business,'site_url':'NA','index': index,'web_description':web_description,'web_directon':web_directon},
                         dont_filter=True
                     )
             else:
@@ -335,7 +408,8 @@ class HotfrogSpider(scrapy.Spider):
         web_phone = response.meta['web_phone']
         web_business = response.meta['web_business']
         site_url = response.meta['site_url']
-
+        web_description = response.meta['web_description']
+        web_directon = response.meta['web_directon']
         # duplicateurl = response.meta['duplicateurl']
         links = LxmlLinkExtractor(allow=()).extract_links(response)
         Finallinks = [str(link.url) for link in links]
@@ -358,7 +432,7 @@ class HotfrogSpider(scrapy.Spider):
                 screenshot=True,
                 callback=self.finalemail,
                 meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                      'web_business': web_business, 'site_url': site_url,'uniqueemail': uniqueemail,'links': links,'index': index},
+                      'web_business': web_business, 'site_url': site_url,'uniqueemail': uniqueemail,'links': links,'index': index,'web_description':web_description,'web_directon':web_directon},
                 dont_filter=True
             )
         else:
@@ -369,7 +443,7 @@ class HotfrogSpider(scrapy.Spider):
                 screenshot=True,
                 callback=self.parse_email,
                 meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                      'web_business': web_business, 'site_url': site_url,'finalemail': finalemail,'index': index},
+                      'web_business': web_business, 'site_url': site_url,'finalemail': finalemail,'index': index,'web_description':web_description,'web_directon':web_directon},
                 dont_filter=True
             )
 
@@ -385,7 +459,8 @@ class HotfrogSpider(scrapy.Spider):
         web_phone = response.meta['web_phone']
         web_business = response.meta['web_business']
         site_url = response.meta['site_url']
-
+        web_description = response.meta['web_description']
+        web_directon = response.meta['web_directon']
 
         uniqueemail = response.meta['uniqueemail']
 
@@ -432,7 +507,7 @@ class HotfrogSpider(scrapy.Spider):
                 callback=self.finalemail,
                 dont_filter=True,
                 meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                      'web_business': web_business, 'site_url': site_url,'uniqueemail': uniqueemail,'links': links,'index': index}
+                      'web_business': web_business, 'site_url': site_url,'uniqueemail': uniqueemail,'links': links,'index': index,'web_description':web_description,'web_directon':web_directon}
             )
         else:
             print()
@@ -464,7 +539,7 @@ class HotfrogSpider(scrapy.Spider):
                 callback=self.parse_email,
                 dont_filter=True,
                 meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                      'web_business': web_business, 'site_url': site_url,'links': links,'finalemail': finalemail,'index': index}
+                      'web_business': web_business, 'site_url': site_url,'links': links,'finalemail': finalemail,'index': index,'web_description':web_description,'web_directon':web_directon}
 
             )
 
