@@ -28,7 +28,7 @@ class HotfrogSpider(scrapy.Spider):
         index = 0
         yield SeleniumRequest(
             url="https://www.hotfrog.com/",
-            wait_time=3,
+            wait_time=1000,
             screenshot=True,
             callback=self.parse,
             meta={'index': index},
@@ -87,7 +87,7 @@ class HotfrogSpider(scrapy.Spider):
 
                 yield SeleniumRequest(
                     url=driver.current_url,
-                    wait_time=3,
+                    wait_time=1000,
                     screenshot=True,
                     callback=self.parse_page,
                     meta={'index': index,'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,'web_business': web_business,'i':i,'main_url':main_url,'numpages':int(numpages[0]),'duplicate_list':duplicate_list,'web_description':web_description,'web_directon':web_directon},
@@ -226,7 +226,7 @@ class HotfrogSpider(scrapy.Spider):
                 i = i + 1
                 yield SeleniumRequest(
                     url=next_page,
-                    wait_time=3,
+                    wait_time=1000,
                     screenshot=True,
                     callback=self.parse_page,
                     meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
@@ -241,7 +241,7 @@ class HotfrogSpider(scrapy.Spider):
                 print()
                 yield SeleniumRequest(
                     url=driver.current_url,
-                    wait_time=3,
+                    wait_time=1000,
                     screenshot=True,
                     callback=self.parse_email,
                     meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
@@ -257,7 +257,7 @@ class HotfrogSpider(scrapy.Spider):
 
             yield SeleniumRequest(
                 url=driver.current_url,
-                wait_time=3,
+                wait_time=1000,
                 screenshot=True,
                 callback=self.parse_email,
                 meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
@@ -336,7 +336,7 @@ class HotfrogSpider(scrapy.Spider):
                     web_link.pop(0)
                     yield SeleniumRequest(
                         url=site_url,
-                        wait_time=3,
+                        wait_time=1000,
                         screenshot=True,
                         callback=self.emailtrack,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
@@ -346,7 +346,7 @@ class HotfrogSpider(scrapy.Spider):
                 else:
                     yield SeleniumRequest(
                         url='https://www.google.com/',
-                        wait_time=3,
+                        wait_time=1000,
                         screenshot=True,
                         callback=self.parse_email,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
@@ -356,7 +356,7 @@ class HotfrogSpider(scrapy.Spider):
             else:
                 yield SeleniumRequest(
                     url='https://www.hotfrog.com/',
-                    wait_time=3,
+                    wait_time=1000,
                     screenshot=True,
                     callback=self.parse,
                     meta={'index': index},
@@ -369,7 +369,7 @@ class HotfrogSpider(scrapy.Spider):
                     web_link.pop(0)
                     yield SeleniumRequest(
                         url=site_url,
-                        wait_time=3,
+                        wait_time=1000,
                         screenshot=True,
                         callback=self.emailtrack,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
@@ -379,7 +379,7 @@ class HotfrogSpider(scrapy.Spider):
                 else:
                     yield SeleniumRequest(
                         url='https://www.google.com/',
-                        wait_time=3,
+                        wait_time=1000,
                         screenshot=True,
                         callback=self.parse_email,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
@@ -389,7 +389,7 @@ class HotfrogSpider(scrapy.Spider):
             else:
                 yield SeleniumRequest(
                     url='https://www.hotfrog.com/',
-                    wait_time=3,
+                    wait_time=1000,
                     screenshot=True,
                     callback=self.parse,
                     meta={'index': index},
@@ -428,7 +428,7 @@ class HotfrogSpider(scrapy.Spider):
 
             yield SeleniumRequest(
                 url=l,
-                wait_time=3,
+                wait_time=1000,
                 screenshot=True,
                 callback=self.finalemail,
                 meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
@@ -439,7 +439,7 @@ class HotfrogSpider(scrapy.Spider):
             finalemail=[]
             yield SeleniumRequest(
                 url='https://www.google.com/',
-                wait_time=3,
+                wait_time=1000,
                 screenshot=True,
                 callback=self.parse_email,
                 meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
