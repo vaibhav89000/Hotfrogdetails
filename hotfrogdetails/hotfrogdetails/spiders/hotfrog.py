@@ -56,9 +56,19 @@ class HotfrogSpider(scrapy.Spider):
             if(index<length):
                 # ind = index
 
+                try:
+                    driver.find_element_by_xpath("//*[@id='what']").clear()
+                    search_input1 = driver.find_element_by_xpath("//*[@id='what']")
+                except:
+                    index = response.meta['index']
+                    yield SeleniumRequest(
+                        url="https://www.hotfrog.com/",
+                        wait_time=1000,
 
-                driver.find_element_by_xpath("//*[@id='what']").clear()
-                search_input1 = driver.find_element_by_xpath("//*[@id='what']")
+                        callback=self.parse,
+                        meta={'index': index},
+                        dont_filter=True
+                    )
                 search_input1.send_keys(find[index])
                 self.find_search=find[index]
                 self.near_search = near[index]
@@ -90,6 +100,7 @@ class HotfrogSpider(scrapy.Spider):
                     wait_time=1000,
                     screenshot=True,
                     callback=self.parse_page,
+                    errback=self.errback_parse_page,
                     meta={'index': index,'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,'web_business': web_business,'i':i,'main_url':main_url,'numpages':int(numpages[0]),'duplicate_list':duplicate_list,'web_description':web_description,'web_directon':web_directon},
                     dont_filter=True
                 )
@@ -116,13 +127,7 @@ class HotfrogSpider(scrapy.Spider):
         print()
         print()
 
-        # if(response.url!='https://www.google.com/'):
-        #     print()
-        #     print(driver.current_url)
-        #     print()
-        #     print()
-        # try:
-        # if(driver.find_element_by_id('master-1')):
+
         try:
             html = driver.page_source
             response_obj = Selector(text=html)
@@ -176,36 +181,34 @@ class HotfrogSpider(scrapy.Spider):
                     if (website_name != None):
                         web_name.append(website_name)
                     else:
-                        web_name.append("NA")
+                        web_name.append("-")
 
                     if (website_link != None):
                         web_link.append(website_link)
                     else:
-                        web_link.append("NA")
+                        web_link.append("-")
 
                     if (phone != None):
                         web_phone.append(phone)
                     else:
-                        web_phone.append("NA")
+                        web_phone.append("-")
 
                     if (final_business_info != ''):
                         web_business.append(final_business_info)
                     else:
-                        web_business.append("NA")
+                        web_business.append("-")
 
                     if (final_business_description != ''):
                         web_description.append(final_business_description)
                     else:
-                        web_description.append("NA")
+                        web_description.append("-")
 
                     if (final_direction != ''):
                         web_directon.append(final_direction)
                     else:
-                        web_directon.append("NA")
+                        web_directon.append("-")
 
-                # i = i+1
-                # next_page = main_url + f'/{i}'
-                # next_page=response_obj.xpath('//div[1]/div[2]/div[58]/nav/ul/li/a[contains(text(),"Next")]/@href').get()
+
             print()
             print()
             print(i,next_page)
@@ -229,6 +232,7 @@ class HotfrogSpider(scrapy.Spider):
                     wait_time=1000,
                     screenshot=True,
                     callback=self.parse_page,
+                    errback=self.errback_parse_page,
                     meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
                           'web_business': web_business,'i':i,'main_url':main_url,'index': index,'numpages':numpages,'duplicate_list':duplicate_list,'web_description':web_description,'web_directon':web_directon},
                     dont_filter=True
@@ -265,21 +269,6 @@ class HotfrogSpider(scrapy.Spider):
                 dont_filter=True
             )
 
-        # else:
-        #     yield SeleniumRequest(
-        #         url='https://www.google.com/',
-        #         wait_time=3,
-        #         screenshot=True,
-        #         callback=self.parse,
-        #         # meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-        #         #       'web_business': web_business},
-        #         dont_filter=True
-        #     )
-
-
-        # else:
-
-
 
 
 
@@ -305,7 +294,7 @@ class HotfrogSpider(scrapy.Spider):
             Hotfrogdetails_Item['direction'] = web_directon[0]
             Hotfrogdetails_Item['find'] = self.find_search
             Hotfrogdetails_Item['near'] = self.near_search
-            Hotfrogdetails_Item['email'] = "NA"
+            Hotfrogdetails_Item['email'] = "-"
             Hotfrogdetails_Item['website'] = self.website
 
             print()
@@ -331,7 +320,7 @@ class HotfrogSpider(scrapy.Spider):
             web_description.pop(0)
             web_directon.pop(0)
             if (len(web_link) > 0):
-                if (web_link[0] != 'NA'):
+                if (web_link[0] != '-'):
                     site_url = web_link[0]
                     web_link.pop(0)
                     yield SeleniumRequest(
@@ -339,6 +328,7 @@ class HotfrogSpider(scrapy.Spider):
                         wait_time=1000,
                         screenshot=True,
                         callback=self.emailtrack,
+                        errback=self.errback_emailtrack,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
                               'web_business': web_business, 'site_url': site_url,'index': index,'web_description':web_description,'web_directon':web_directon},
                         dont_filter=True
@@ -350,7 +340,7 @@ class HotfrogSpider(scrapy.Spider):
                         screenshot=True,
                         callback=self.parse_email,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                              'web_business': web_business, 'site_url': 'NA','index': index,'web_description':web_description,'web_directon':web_directon},
+                              'web_business': web_business, 'site_url': '-','index': index,'web_description':web_description,'web_directon':web_directon},
                         dont_filter=True
                     )
             else:
@@ -364,7 +354,7 @@ class HotfrogSpider(scrapy.Spider):
                 )
         else:
             if(len(web_link) > 0):
-                if(web_link[0]!='NA'):
+                if(web_link[0]!='-'):
                     site_url=web_link[0]
                     web_link.pop(0)
                     yield SeleniumRequest(
@@ -372,6 +362,7 @@ class HotfrogSpider(scrapy.Spider):
                         wait_time=1000,
                         screenshot=True,
                         callback=self.emailtrack,
+                        errback=self.errback_emailtrack,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
                               'web_business': web_business,'site_url':site_url,'index': index,'web_description':web_description,'web_directon':web_directon},
                         dont_filter=True
@@ -383,7 +374,7 @@ class HotfrogSpider(scrapy.Spider):
                         screenshot=True,
                         callback=self.parse_email,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
-                              'web_business': web_business,'site_url':'NA','index': index,'web_description':web_description,'web_directon':web_directon},
+                              'web_business': web_business,'site_url':'-','index': index,'web_description':web_description,'web_directon':web_directon},
                         dont_filter=True
                     )
             else:
@@ -431,6 +422,7 @@ class HotfrogSpider(scrapy.Spider):
                 wait_time=1000,
                 screenshot=True,
                 callback=self.finalemail,
+                errback=self.errback_finalemail,
                 meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
                       'web_business': web_business, 'site_url': site_url,'uniqueemail': uniqueemail,'links': links,'index': index,'web_description':web_description,'web_directon':web_directon},
                 dont_filter=True
@@ -505,9 +497,11 @@ class HotfrogSpider(scrapy.Spider):
                 wait_time=1000,
                 screenshot=True,
                 callback=self.finalemail,
+                errback=self.errback_finalemail,
                 dont_filter=True,
                 meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
                       'web_business': web_business, 'site_url': site_url,'uniqueemail': uniqueemail,'links': links,'index': index,'web_description':web_description,'web_directon':web_directon}
+
             )
         else:
             print()
@@ -545,58 +539,83 @@ class HotfrogSpider(scrapy.Spider):
 
 
 
+    def errback_finalemail(self,failure):
+        meta=failure.request.meta
+        links=meta['links']
+        uniqueemail = meta['uniqueemail']
+        if(len(links)>0):
+            l = links[0]
+            links.pop(0)
+            yield SeleniumRequest(
+                url=l,
+                wait_time=1000,
+                screenshot=True,
+                callback=self.finalemail,
+                errback=self.errback_finalemail,
+                dont_filter=True,
+                meta=meta
+            )
+        else:
+            print()
+            print()
+            print()
+            print('hello I am in errback_finalemail')
+            print()
+            print()
+            print()
+            emails = list(uniqueemail)
+            finalemail = []
+            discard = ['robert@broofa.com']
+            for email in emails:
+                if ('.in' in email or '.com' in email or 'info' in email or '.org' in email):
+                    for dis in discard:
+                        if (dis not in email):
+                            finalemail.append(email)
+            print()
+            print()
+            print()
+            print('final in errback_finalemail', finalemail)
+            print()
+            print()
+            print()
+            meta['finalemail']=finalemail
+            yield SeleniumRequest(
+                url='https://www.google.com/',
+                wait_time=1000,
+                screenshot=True,
+                callback=self.parse_email,
+                dont_filter=True,
+                meta=meta
+            )
+
+
+    def errback_emailtrack(self,failure):
+        meta = failure.request.meta
+        finalemail = []
+        meta['finalemail']=finalemail
+        yield SeleniumRequest(
+            url='https://www.google.com/',
+            wait_time=1000,
+            screenshot=True,
+            callback=self.parse_email,
+            meta=meta,
+            dont_filter=True
+        )
+
+
+    def errback_parse_page(self,failure):
+        meta=failure.request.meta
+        yield SeleniumRequest(
+            url='https://www.hotfrog.com/',
+            wait_time=1000,
+            screenshot=True,
+            callback=self.parse_email,
+            meta=meta,
+            dont_filter=True
+        )
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-        # frame_url = response_obj.xpath('//iframe[@id="master-1"]/@src').get()
-        # # frame_url=frame_url.split('#master')[0]
-        # print()
-        # print(frame_url)
-        # print()
-        # yield SeleniumRequest(
-        #     url=frame_url,
-        #     wait_time=3,
-        #     screenshot=True,
-        #     callback=self.scrape_detail,
-        #     dont_filter=True
-        # )
-
-    # def scrape_detail(self,response):
-    #     driver = response.meta['driver']
-    #     html = driver.page_source
-    #     response_obj = Selector(text=html)
-    #     print()
-    #     print(html)
-    #     print()
-    #     print()
-    #     details = response_obj.xpath("//div[@class='gc_ si101 c_']")
-    #     print()
-    #     print(len(details))
-    #     print('hi')
-    #     print()
-    #     for detail in details:
-    #         self.website_name = detail.xpath('.//div/div/a[2]/text()').get()
-    #         # self.website_link = detail.xpath('.//div[1]/div/a[2]/@href()').get()
-    #         # self.phone = detail.xpath('.//div[1]/span/text()').get()
-    #         # self.business_info = detail.xpath('.//div[2]/a/text()').get()
-    #
-    #         yield {
-    #             'website_name': self.website_name
-    #             # 'website_link': self.website_link,
-    #             # 'phone': self.phone,
-    #             # 'business_info': self.business_info
-    #         }
 
 
 

@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1b22246f-cce9-4a87-b563-0d86282a5e26" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/hotfrogdetails/geckodriver.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hotfrogdetails/hotfrogdetails.db" beforeDir="false" afterPath="$PROJECT_DIR$/hotfrogdetails/hotfrogdetails.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hotfrogdetails/hotfrogdetails/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/hotfrogdetails/hotfrogdetails/settings.py" afterDir="false" />
@@ -26,7 +27,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../yelpsecondinputrepo" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -61,18 +62,18 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="549" y="168" key="FileChooserDialogImpl" timestamp="1594033694748">
+    <state x="549" y="168" key="FileChooserDialogImpl" timestamp="1594623963322">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="549" y="168" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1594033694748" />
+    <state x="549" y="168" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1594623963322" />
     <state x="277" y="56" key="SettingsEditor" timestamp="1593421080803">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="277" y="56" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1593421080803" />
-    <state x="465" y="238" key="com.intellij.ide.util.TipDialog" timestamp="1594023282746">
+    <state x="465" y="238" key="com.intellij.ide.util.TipDialog" timestamp="1594470532088">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="465" y="238" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1594023282746" />
+    <state x="465" y="238" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1594470532088" />
     <state x="184" y="96" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1593412341489">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
