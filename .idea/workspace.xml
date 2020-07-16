@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1b22246f-cce9-4a87-b563-0d86282a5e26" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/hotfrogdetails/geckodriver.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hotfrogdetails/hotfrogdetails.db" beforeDir="false" afterPath="$PROJECT_DIR$/hotfrogdetails/hotfrogdetails.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hotfrogdetails/hotfrogdetails/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/hotfrogdetails/hotfrogdetails/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hotfrogdetails/hotfrogdetails/spiders/hotfrog.py" beforeDir="false" afterPath="$PROJECT_DIR$/hotfrogdetails/hotfrogdetails/spiders/hotfrog.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hotfrogdetails/location.txt" beforeDir="false" afterPath="$PROJECT_DIR$/hotfrogdetails/location.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hotfrogdetails/option.txt" beforeDir="false" afterPath="$PROJECT_DIR$/hotfrogdetails/option.txt" afterDir="false" />
     </list>
