@@ -75,11 +75,9 @@ class HotfrogSpider(scrapy.Spider):
                 driver.find_element_by_xpath("//*[@id='where']").clear()
                 search_input2 = driver.find_element_by_xpath("//*[@id='where']")
                 search_input2.send_keys(near[index])
-                print()
-                print()
+                print("\n"*2)
                 print(find[index],near[index])
-                print()
-                print()
+                print("\n" * 2)
                 search_button = driver.find_element_by_xpath("//header/div[2]/div/div[2]/form/div/button")
                 search_button.click()
                 web_name = []
@@ -124,8 +122,7 @@ class HotfrogSpider(scrapy.Spider):
         print('number of pages',numpages)
         print('i', i)
         print(driver.current_url)
-        print()
-        print()
+        print("\n"*2)
 
 
         try:
@@ -137,11 +134,9 @@ class HotfrogSpider(scrapy.Spider):
 
             html = driver.page_source
             response_obj = Selector(text=html)
-            print()
-            print()
+            print("\n"*2)
             print('inside',response.url)
-            print()
-            print()
+            print("\n"*2)
             details = response_obj.xpath("//div[@class='gc_ si101 c_']")
             print()
             print(len(details))
@@ -160,8 +155,7 @@ class HotfrogSpider(scrapy.Spider):
                 direction = detail.xpath('.//div[2]/span//text()').extract()
                 if(website_name not in duplicate_list):
                     duplicate_list.append(website_name)
-                    print()
-                    print()
+                    print("\n"*2)
                     print(business_info)
                     print(business_description)
                     print(direction)
@@ -209,11 +203,9 @@ class HotfrogSpider(scrapy.Spider):
                         web_directon.append("-")
 
 
-            print()
-            print()
+            print("\n"*2)
             print(i,next_page)
-            print()
-            print()
+            print("\n"*2)
             # next_page=f"https://www.hotfrog.com{direction}"
             print()
             print(type(i))
@@ -224,8 +216,7 @@ class HotfrogSpider(scrapy.Spider):
                 print()
                 print('next page')
                 next_page = f"https://www.hotfrog.com{next_page}"
-                print()
-                print()
+                print("\n"*2)
                 i = i + 1
                 yield SeleniumRequest(
                     url=next_page,
@@ -238,11 +229,9 @@ class HotfrogSpider(scrapy.Spider):
                     dont_filter=True
                 )
             else:
-                print()
-                print()
+                print("\n"*2)
                 print('Ready for email',i)
-                print()
-                print()
+                print("\n"*2)
                 yield SeleniumRequest(
                     url=driver.current_url,
                     wait_time=1000,
@@ -253,11 +242,9 @@ class HotfrogSpider(scrapy.Spider):
                     dont_filter=True
                 )
         except:
-            print()
-            print()
+            print("\n"*2)
             print('No more page')
-            print()
-            print()
+            print("\n"*2)
 
             yield SeleniumRequest(
                 url=driver.current_url,
@@ -297,12 +284,10 @@ class HotfrogSpider(scrapy.Spider):
             Hotfrogdetails_Item['email'] = "-"
             Hotfrogdetails_Item['website'] = self.website
 
-            print()
-            print()
+            print("\n"*2)
             print(len(finalemail))
             print(type(finalemail))
-            print()
-            print()
+            print("\n" * 2)
             if (len(finalemail) == 0):
                 yield Hotfrogdetails_Item
             else:
@@ -407,7 +392,7 @@ class HotfrogSpider(scrapy.Spider):
         links = []
         for link in Finallinks:
             if (
-                    'Contact' in link or 'contact' in link or 'About' in link or 'about' in link or 'home' in link or 'Home' in link or 'HOME' in link or 'CONTACT' in link or 'ABOUT' in link):
+                    'Contact' in link or 'contact' in link or 'About' in link or 'about' in link  or 'CONTACT' in link or 'ABOUT' in link):
                 links.append(link)
 
         links.append(str(response.url))
@@ -457,7 +442,7 @@ class HotfrogSpider(scrapy.Spider):
         uniqueemail = response.meta['uniqueemail']
 
         flag = 0
-        bad_words = ['facebook', 'instagram', 'youtube', 'twitter', 'wiki']
+        bad_words = ['facebook', 'instagram', 'youtube', 'twitter', 'wiki', 'linkedin']
         for word in bad_words:
             if word in str(response.url):
                 # return
@@ -472,24 +457,16 @@ class HotfrogSpider(scrapy.Spider):
                     mail_list = i
                     if (mail_list not in uniqueemail):
                         uniqueemail.add(mail_list)
-                        print()
-                        print()
-                        print()
+                        print("\n"*2)
                         print(uniqueemail)
-                        print()
-                        print()
-                        print()
+                        print("\n"*2)
             else:
                 pass
 
         if (len(links) > 0 and len(uniqueemail) < 5):
-            print()
-            print()
-            print()
+            print("\n"*2)
             print('hi', len(links))
-            print()
-            print()
-            print()
+            print("\n"*2)
             l = links[0]
             links.pop(0)
             yield SeleniumRequest(
@@ -504,13 +481,9 @@ class HotfrogSpider(scrapy.Spider):
 
             )
         else:
-            print()
-            print()
-            print()
+            print("\n" * 2)
             print('hello')
-            print()
-            print()
-            print()
+            print("\n"*2)
             emails = list(uniqueemail)
             finalemail = []
             discard = ['robert@broofa.com']
@@ -519,13 +492,9 @@ class HotfrogSpider(scrapy.Spider):
                     for dis in discard:
                         if (dis not in email):
                             finalemail.append(email)
-            print()
-            print()
-            print()
+            print("\n"*2)
             print('final', finalemail)
-            print()
-            print()
-            print()
+            print("\n"*2)
             yield SeleniumRequest(
                 url='https://www.google.com/',
                 wait_time=1000,
@@ -556,13 +525,9 @@ class HotfrogSpider(scrapy.Spider):
                 meta=meta
             )
         else:
-            print()
-            print()
-            print()
+            print("\n"*2)
             print('hello I am in errback_finalemail')
-            print()
-            print()
-            print()
+            print("\n"*2)
             emails = list(uniqueemail)
             finalemail = []
             discard = ['robert@broofa.com']
@@ -571,13 +536,9 @@ class HotfrogSpider(scrapy.Spider):
                     for dis in discard:
                         if (dis not in email):
                             finalemail.append(email)
-            print()
-            print()
-            print()
+            print("\n"*2)
             print('final in errback_finalemail', finalemail)
-            print()
-            print()
-            print()
+            print("\n"*2)
             meta['finalemail']=finalemail
             yield SeleniumRequest(
                 url='https://www.google.com/',
