@@ -36,72 +36,72 @@ class HotfrogSpider(scrapy.Spider):
         )
 
     def parse(self, response):
-        if(response.url!='https://www.google.com/'):
-            driver = response.meta['driver']
-            index = response.meta['index']
+        driver = response.meta['driver']
+        index = response.meta['index']
 
-            firstinput = os.path.abspath(os.curdir) + "\option.txt"
-            secondinput = os.path.abspath(os.curdir) + "\location.txt"
-            thirdinput = os.path.abspath(os.curdir) + "\pages.txt"
+        firstinput = os.path.abspath(os.curdir) + "\option.txt"
+        secondinput = os.path.abspath(os.curdir) + "\location.txt"
+        thirdinput = os.path.abspath(os.curdir) + "\pages.txt"
 
-            f = open(firstinput, "r")
-            find = f.read().splitlines()
+        f = open(firstinput, "r")
+        find = f.read().splitlines()
 
-            f = open(secondinput, "r")
-            near = f.read().splitlines()
+        f = open(secondinput, "r")
+        near = f.read().splitlines()
 
-            f = open(thirdinput, "r")
-            numpages = f.read().splitlines()
-            length = len(find)
-            if(index<length):
-                # ind = index
+        f = open(thirdinput, "r")
+        numpages = f.read().splitlines()
+        length = len(find)
+        if(index<length):
+            # ind = index
 
-                try:
-                    driver.find_element_by_xpath("//*[@id='what']").clear()
-                    search_input1 = driver.find_element_by_xpath("//*[@id='what']")
-                except:
-                    index = response.meta['index']
-                    yield SeleniumRequest(
-                        url="https://www.hotfrog.com/",
-                        wait_time=1000,
-
-                        callback=self.parse,
-                        meta={'index': index},
-                        dont_filter=True
-                    )
-                search_input1.send_keys(find[index])
-                self.find_search=find[index]
-                self.near_search = near[index]
-                driver.find_element_by_xpath("//*[@id='where']").clear()
-                search_input2 = driver.find_element_by_xpath("//*[@id='where']")
-                search_input2.send_keys(near[index])
-                print("\n"*2)
-                print(find[index],near[index])
-                print("\n" * 2)
-                search_button = driver.find_element_by_xpath("//header/div[2]/div/div[2]/form/div/button")
-                search_button.click()
-                web_name = []
-                web_link = []
-                web_phone = []
-                web_business = []
-                web_description = []
-                web_directon = []
-                i=1
-                main_url = driver.current_url
-
-                index += 1
-
-                duplicate_list=[]
-
+            try:
+                driver.find_element_by_xpath("//*[@id='what']").clear()
+                search_input1 = driver.find_element_by_xpath("//*[@id='what']")
+            except:
+                index = response.meta['index']
                 yield SeleniumRequest(
-                    url=driver.current_url,
+                    url="https://www.hotfrog.com/",
                     wait_time=1000,
-                    screenshot=True,
-                    callback=self.parse_page,
-                    errback=self.errback_parse_page,
-                    meta={'index': index,'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,'web_business': web_business,'i':i,'main_url':main_url,'numpages':int(numpages[0]),'duplicate_list':duplicate_list,'web_description':web_description,'web_directon':web_directon},
+
+                    callback=self.parse,
+                    errback=self.errback_hotfrog,
+                    meta={'index': index},
                     dont_filter=True
                 )
+            search_input1.send_keys(find[index])
+            self.find_search=find[index]
+            self.near_search = near[index]
+            driver.find_element_by_xpath("//*[@id='where']").clear()
+            search_input2 = driver.find_element_by_xpath("//*[@id='where']")
+            search_input2.send_keys(near[index])
+            print("\n"*2)
+            print(find[index],near[index])
+            print("\n" * 2)
+            search_button = driver.find_element_by_xpath("//header/div[2]/div/div[2]/form/div/button")
+            search_button.click()
+            web_name = []
+            web_link = []
+            web_phone = []
+            web_business = []
+            web_description = []
+            web_directon = []
+            i=1
+            main_url = driver.current_url
+
+            index += 1
+
+            duplicate_list=[]
+
+            yield SeleniumRequest(
+                url=driver.current_url,
+                wait_time=1000,
+                screenshot=True,
+                callback=self.parse_page,
+                errback=self.errback_parse_page,
+                meta={'index': index,'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,'web_business': web_business,'i':i,'main_url':main_url,'numpages':int(numpages[0]),'duplicate_list':duplicate_list,'web_description':web_description,'web_directon':web_directon},
+                dont_filter=True
+            )
 
 
     def parse_page(self,response):
@@ -324,6 +324,7 @@ class HotfrogSpider(scrapy.Spider):
                         wait_time=1000,
                         screenshot=True,
                         callback=self.parse_email,
+                        errback=self.errback_google,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
                               'web_business': web_business, 'site_url': '-','index': index,'web_description':web_description,'web_directon':web_directon},
                         dont_filter=True
@@ -334,6 +335,7 @@ class HotfrogSpider(scrapy.Spider):
                     wait_time=1000,
                     screenshot=True,
                     callback=self.parse,
+                    errback=self.errback_hotfrog,
                     meta={'index': index},
                     dont_filter=True
                 )
@@ -358,6 +360,7 @@ class HotfrogSpider(scrapy.Spider):
                         wait_time=1000,
                         screenshot=True,
                         callback=self.parse_email,
+                        errback=self.errback_google,
                         meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
                               'web_business': web_business,'site_url':'-','index': index,'web_description':web_description,'web_directon':web_directon},
                         dont_filter=True
@@ -368,6 +371,7 @@ class HotfrogSpider(scrapy.Spider):
                     wait_time=1000,
                     screenshot=True,
                     callback=self.parse,
+                    errback=self.errback_hotfrog,
                     meta={'index': index},
                     dont_filter=True
                 )
@@ -419,6 +423,7 @@ class HotfrogSpider(scrapy.Spider):
                 wait_time=1000,
                 screenshot=True,
                 callback=self.parse_email,
+                errback=self.errback_google,
                 meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
                       'web_business': web_business, 'site_url': site_url,'finalemail': finalemail,'index': index,'web_description':web_description,'web_directon':web_directon},
                 dont_filter=True
@@ -500,6 +505,7 @@ class HotfrogSpider(scrapy.Spider):
                 wait_time=1000,
                 screenshot=True,
                 callback=self.parse_email,
+                errback=self.errback_google,
                 dont_filter=True,
                 meta={'web_name': web_name, 'web_link': web_link, 'web_phone': web_phone,
                       'web_business': web_business, 'site_url': site_url,'links': links,'finalemail': finalemail,'index': index,'web_description':web_description,'web_directon':web_directon}
@@ -545,6 +551,7 @@ class HotfrogSpider(scrapy.Spider):
                 wait_time=1000,
                 screenshot=True,
                 callback=self.parse_email,
+                errback=self.errback_google,
                 dont_filter=True,
                 meta=meta
             )
@@ -559,6 +566,7 @@ class HotfrogSpider(scrapy.Spider):
             wait_time=1000,
             screenshot=True,
             callback=self.parse_email,
+            errback=self.errback_google,
             meta=meta,
             dont_filter=True
         )
@@ -575,32 +583,28 @@ class HotfrogSpider(scrapy.Spider):
             dont_filter=True
         )
 
+    def errback_hotfrog(self,failure):
+        meta=failure.request.meta
+        yield SeleniumRequest(
+            url='https://www.hotfrog.com/',
+            wait_time=1000,
+            screenshot=True,
+            callback=self.parse,
+            errback=self.errback_hotfrog,
+            meta=meta,
+            dont_filter=True
+        )
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def errback_google(self,failure):
+        meta = failure.request.meta
+        yield SeleniumRequest(
+            url='https://www.google.com/',
+            wait_time=1000,
+            screenshot=True,
+            callback=self.parse_email,
+            errback=self.errback_google,
+            meta=meta,
+            dont_filter=True
+        )
 
